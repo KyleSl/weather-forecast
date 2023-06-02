@@ -88,10 +88,10 @@ $(function () {
 
     function addWeatherInfo(city){
         $('#city-name').text(city.text());
-        getWeatherData(city.attr('data-lat'), city.attr('data-lon'));
+        getWeatherForecast(city.attr('data-lat'), city.attr('data-lon'));
     }
 
-    function getWeatherData(lat, lon){
+    function getWeatherForecast(lat, lon){
         var requestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + API_KEY;
         fetch(requestURL)
             .then(function(response){
@@ -99,7 +99,6 @@ $(function () {
             })
             .then(function(data){
                 console.log(data);
-                return data;
             })
-    }
+        }
 });
