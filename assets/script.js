@@ -1,28 +1,35 @@
 const API_KEY = "76b88bf1b17386c11d9dce4da4425290";
 
 $(function () {
+    // Initial jQuery grabs
     var searchBar = $('#city-search');
     var searchList = $('#search-list');
     var searchItems = $('.search-item'); // array
     var cityList = $('#city-list');
-    var cities;
-    var timer;
+
+    var cities; // Stores jQuery array
+    var timer; // Used for typing timer
     const typingInterval = 1000;
 
-    initializeCities();
+    initializeCities(); // Pulls cities from localStorage when page is loaded
 
+    // Empties localStorage and resets the page when clear button is pressed
     $('#clearButton').on('click', function() {
         localStorage.removeItem('cities');
         cityList.empty();
+        $('#weather-box').empty();
+        $('#current-weather').addClass('d-none');
+        $('#city-name').text('');
     });
 
-    // DONE
-    searchBar.on('input', function () { // Detects when user types in search bar
-        clearTimeout(timer);
-        timer = setTimeout(doneTyping, typingInterval);
+    // Uses timer to detect when the user has stopped typing
+    // This reduces the amount of API calls and the possibility of overlapping data
+    searchBar.on('input', function () {
+        clearTimeout(timer); // The timer is reset when the user types
+        timer = setTimeout(doneTyping, typingInterval); // Once this timer runs out, the function that calls the API runs
     });
 
-    // DONE
+    // Uses the name that the user entered and calls an API that returns GPS coordinates
     function getLocationData(cityName){
         if(cityName){
             var requestURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + API_KEY;
@@ -39,12 +46,13 @@ $(function () {
         }
     }
 
-    // DONE
+    // Empties the search results list
     function clearList(){
         searchList.empty();
     }
 
-    // DONE
+    // Creates a list of the replies from the API
+    // Gives 5 possible cities for the user to use based on their input
     function displayList(data){
         for(var i = 0; i < data.length; i++){
             var newItem = $('<li>' + data[i].name + ', ' + data[i].state + '</li>');
@@ -53,16 +61,18 @@ $(function () {
             searchList.append(newItem);
         }
         searchItems = $('.search-item');
+
+        // Starts event handlers
         detectHover(searchItems);
         detectClick(data);
     }
 
-    // DONE
+    // Called when the timer runs out
     function doneTyping () {
         getLocationData(searchBar.val());
     }
 
-    // DONE
+    // Event handler for list items that makes them blue when hovered over
     function detectHover(item) {
         item.hover(
             function (e){
@@ -73,7 +83,7 @@ $(function () {
             });
     }
 
-    // DONE
+    // When a list item is clicked on, it is added to the city list and saved to localStorage
     function detectClick(data) {
         searchItems.on('click', function(e){
             clearList();
@@ -83,7 +93,7 @@ $(function () {
         });
     }
 
-    // DONE
+    // Displays the added city on the list
     function addCity(city){
         console.log(city);
         var newCity = $('<li>' + city.name + ', ' + city.state + '</li>');
@@ -96,6 +106,7 @@ $(function () {
         detectClickedCity();
     }
 
+    // Pulls cities from localStorage and displays them
     function initializeCities(){
         var stored = pullFromLocal();
         for(var i = 0; i < stored.length; i++){
@@ -103,6 +114,8 @@ $(function () {
         }
     }
 
+    // Grabs cities from localStorage and returns them
+    // If cities is null, it returns an empty array
     function pullFromLocal(){
         var stored = JSON.parse(localStorage.getItem('cities'));
         if(stored !== null){
@@ -112,6 +125,7 @@ $(function () {
         }
     }
 
+    // Appends the city info to the localStorage array
     function pushCityToLocal(city){
         var store = {name: city.name, state: city.state, lat: city.lat, lon: city.lon};
         var stored = pullFromLocal();
@@ -119,19 +133,21 @@ $(function () {
         localStorage.setItem("cities", JSON.stringify(stored));
     }
 
-    // DONE
+    // Shows the weather data for the city that was clicked
     function detectClickedCity() {
         cities.on('click', function (e) {
             addWeatherInfo($(e.target));
         });
     }
 
+    // Calls the API with the lat and lon data
     function addWeatherInfo(city){
         $('#city-name').text(city.text());
         getWeatherForecast(city.attr('data-lat'), city.attr('data-lon'));
         getCurrentWeather(city.attr('data-lat'), city.attr('data-lon'));
     }
 
+    // Calls the API with lat and lon and displays it
     function getWeatherForecast(lat, lon){
         var requestURL = "https://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid=" + API_KEY + "&units=imperial";
         fetch(requestURL)
@@ -143,8 +159,10 @@ $(function () {
             })
     }
 
+    // Displays the weather data on cards
     function displayForecast(data){
         var weatherBox = $('#weather-box');
+        weatherBox.empty();
         console.log(data);
         for(var i = 0; i < data.list.length; i++){
             if(data.list[i].dt_txt.at(11) == 1 && data.list[i].dt_txt.at(12) == 2){
@@ -168,7 +186,7 @@ $(function () {
         }
     }
 
-    // DONE
+    // Calls the API with lat and lon and displays it
     function getCurrentWeather(lat, lon){
         var requestURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=" + API_KEY + "&units=imperial";
         fetch(requestURL)
@@ -180,7 +198,7 @@ $(function () {
             });
     }
 
-    // DONE
+    // Displays the data on main card
     function displayCurrentWeather(data){
         $('#current-weather').removeClass('d-none');
         $('#currTemp').text('Temp: ' + parseFloat(data.main.temp).toFixed(2) + '°');
