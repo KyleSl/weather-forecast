@@ -32,7 +32,7 @@ $(function () {
     // Uses the name that the user entered and calls an API that returns GPS coordinates
     function getLocationData(cityName){
         if(cityName){
-            var requestURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + API_KEY;
+            var requestURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&limit=5&appid=" + API_KEY;
             fetch(requestURL)
                 .then(function (response) {
                     return response.json();
