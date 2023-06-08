@@ -104,6 +104,7 @@ $(function () {
         cities = $('.city-item');
         detectHover(cities);
         detectClickedCity();
+        addWeatherInfo(newCity);
     }
 
     // Pulls cities from localStorage and displays them
