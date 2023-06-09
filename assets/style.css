@@ -32,3 +32,7 @@
     margin:2%;
     text-align:center;
 }
+
+.custom-bg {
+    background-color: rgb(206, 111, 206);
+}

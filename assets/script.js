@@ -182,7 +182,7 @@ $(function () {
                 newSect.append(temp);
                 newSect.append(wind);
                 newSect.append(humid);
-                newSect.addClass('bg-white w-25 m-2 p-2 rounded text-center');
+                newSect.addClass('custom-bg w-25 m-2 p-2 rounded text-center');
             }
         }
     }
